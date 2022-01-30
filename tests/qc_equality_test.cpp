@@ -35,8 +35,9 @@ int main()
 	uint64_t a = 0;
 	int64_t b = 0;
 	CHECK_EQUAL<uint64_t>(a, b);
+
 	/*
-	LEAVE THIS COMMENTED, casting from unsigned to a signed int is implementation defined ==> therefore there will be a warning here when this library is compiled.
+	LEAVE THIS COMMENTED, casting from unsigned to a signed int is implementation defined ==> therefore there will be a warning here when this library is compiled with certain compiler flags.
 
  	utils::test_numbers<uint8_t, int8_t>([](uint8_t a, int8_t b) { quality_control::check_equal<int8_t>(a, b); });
 	utils::test_numbers<uint16_t, int16_t>([](uint16_t a , int16_t b) { quality_control::check_equal<int16_t>(a, b); });
