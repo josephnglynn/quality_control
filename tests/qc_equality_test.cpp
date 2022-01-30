@@ -42,7 +42,7 @@ int main()
 	utils::test_numbers<uint16_t, int16_t>([](uint16_t a , int16_t b) { quality_control::check_equal<int16_t>(a, b); });
 	utils::test_numbers<uint32_t, int32_t>([](uint32_t a, int32_t b) { quality_control::check_equal<int32_t>(a, b); });
 	utils::test_numbers<uint64_t, int64_t>([](uint64_t a, int64_t b) { quality_control::check_equal<int64_t>(a, b); });
-    */
+        */
 
 	//big to small
 	utils::test_numbers<uint64_t, uint8_t>([](uint64_t a, uint8_t b) { quality_control::check_equal(a, b); });
