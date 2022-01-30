@@ -14,8 +14,28 @@ namespace utils
 	template<typename A, typename B>
 	constexpr inline void test_numbers(std::function<void(A, B)> func)
 	{
-		A a = 0;
-		B b = 0;
+		A a;
+		B b;
+
+		if (std::is_signed_v<A>)
+		{
+			a = -8;
+		}
+		else
+		{
+			a = 0;
+		}
+
+		if (std::is_signed_v<B>) {
+			b = -8;
+		} else {
+			b = 0;
+		}
+
+
+		func(a, b);
+
+		a = b = 2;
 		func(a, b);
 
 		a = b = 1;

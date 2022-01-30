@@ -12,13 +12,13 @@ quality_control_includes = include_directories('.')
 quality_control_sources = ['quality_control/quality_control.cpp']
 quality_control_deps = [dependency('logger', fallback: ['logger', 'logger_dep'])]
    
-arg = ''
+arg = '-Wno-sign-compare'
 if get_option('buildtype').startswith('debug')
    arg = '-DDEBUG'
 endif
 
 
-add_project_arguments(arg, language: 'cpp')
+add_project_arguments(arg, language: ['cpp', 'c'])
 
 quality_control = shared_library(
     'quality_control',
