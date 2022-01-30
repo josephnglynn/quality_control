@@ -1,3 +1,4 @@
-# Quality Control ==> 👷 🚧 ⚠️ 🛑
+# Quality Control 🚀
 
-Test all you code before it leaves the factory!
+Test all you code before it goes to the moon!
+
