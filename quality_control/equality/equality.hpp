@@ -14,7 +14,7 @@ namespace quality_control
 	constexpr inline bool _check_equal(const A& a, const B& b)
 	{
 		if (a == b) return true;
-		return _on_unexpected_result<do_not_exit>(__FUNCTION__, a, b);
+		return _on_unexpected_result<_cast_to::do_not_exit>(__FUNCTION__, a, b);
 	}
 
 	template<typename C = void, typename A, typename B>
@@ -30,23 +30,39 @@ namespace quality_control
 		return _check_equal<T, T>(a, b);
 	}
 
+	
 	template<typename A, typename B>
-	constexpr bool assert_equal(const A& a, const B& b)
+	constexpr inline bool _assert_equal(const A& a, const B& b)
 	{
 		if (a == b) return true;
-		return _on_unexpected_result<exit>(__FUNCTION__, a, b);
+		return _on_unexpected_result<_cast_to::exit>(__FUNCTION__, a, b);
+	}
+
+	template<typename C = void, typename A, typename B>
+	constexpr bool assert_equal(const A& a, const B& b)
+	{
+		if constexpr (std::is_void_v<C>) return _assert_equal(a, b);
+		if constexpr (!std::is_void_v<C>) return _assert_equal(std::is_same_v<A, C> ? a : static_cast<C>(a), std::is_same_v<B, C> ? b : static_cast<C>(b));
 	}
 
 	template<typename T>
-	constexpr void assert_equal(const T& a, const T& b)
+	constexpr bool assert_equal(const T& a, const T& b)
 	{
-		return check_equal<T, T>(a, b);
+		return _assert_equal<T, T>(a, b);
 	}
+
+	
 }// namespace quality_control
 
 template<typename C = void, typename A, typename B>
 constexpr bool CHECK_EQUAL(const A& a, const B& b)
 {
 	return quality_control::check_equal<C>(a, b);
+}
+
+template<typename C = void, typename A, typename B>
+constexpr bool ASSERT_EQUAL(const A& a, const B& b)
+{
+	return quality_control::assert_equal<C>(a, b);
 }
 #endif//QUALITY_CONTROL_EQUALITY_HPP
