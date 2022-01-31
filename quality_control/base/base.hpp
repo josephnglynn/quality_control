@@ -14,7 +14,7 @@
 namespace quality_control
 {
 
-	enum _exit_on_error
+	enum _exit_type
 	{
 		do_not_exit,
 		exit
@@ -27,7 +27,8 @@ namespace quality_control
 	}
 
 	template<typename T>
-	struct _output_value {
+	struct _output_value
+	{
 		const T* t;
 
 		constexpr friend std::ostream& operator<<(std::ostream& os, const _output_value<T>& output_value)
@@ -54,20 +55,24 @@ namespace quality_control
 		return output_value;
 	}
 
-	template<_exit_on_error exit_on_error, typename A, typename B>
+	template<_exit_type exit_on_error, typename A, typename B>
 	constexpr bool _on_unexpected_result(const char* test_name, const A& a, const B& b)
 	{
 		logger::error("Error running test: ", test_name);
 		logger::error("Where a" LOGGER_PURPLE " ( type:",
-					  abi::__cxa_demangle(typeid(a).name(), nullptr, nullptr, nullptr), "):",
-					  _output_error_value(a));
+			abi::__cxa_demangle(typeid(a).name(), nullptr, nullptr, nullptr), "):",
+			_output_error_value(a));
 		logger::error("And b" LOGGER_PURPLE " ( type:",
-					  abi::__cxa_demangle(typeid(b).name(), nullptr, nullptr, nullptr), "):",
-					  _output_error_value(b));
+			abi::__cxa_demangle(typeid(b).name(), nullptr, nullptr, nullptr), "):",
+			_output_error_value(b));
 		if constexpr (exit_on_error == exit) std::exit(EXIT_CODE_ON_ERROR);
 		return false;
 	}
 
+	#define  _quality_control_do_cast_if_not_void(x, T) [&]{ \
+		if constexpr (std::is_void<T>::value || std::is_same<decltype(x), T>::value) return x; \
+		if constexpr (!std::is_void<T>::value && !std::is_same<decltype(x), T>::value) return static_cast<T>(x); \
+	}()
 
 }// namespace quality_control
 
