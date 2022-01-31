@@ -14,12 +14,6 @@
 namespace quality_control
 {
 
-	template<typename T>
-	struct _cast_to {
-
-	};
-
-
 	enum _exit_on_error
 	{
 		do_not_exit,
@@ -36,9 +30,9 @@ namespace quality_control
 	struct _output_value {
 		const T* t;
 
-		friend std::ostream& operator<<(std::ostream& os, const _output_value<T>& output_value)
+		constexpr friend std::ostream& operator<<(std::ostream& os, const _output_value<T>& output_value)
 		{
-			if (_new_line_for_output<T>())
+			if constexpr (_new_line_for_output<T>())
 			{
 				os << "\n"
 				   << LOGGER_INTERVAL << *output_value.t;
