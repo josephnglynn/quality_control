@@ -14,7 +14,7 @@ namespace quality_control
 	constexpr inline bool _check_equal(const A& a, const B& b)
 	{
 		if (a == b) return true;
-		return _on_unexpected_result<_cast_to::do_not_exit>(__FUNCTION__, a, b);
+		return _on_unexpected_result<_exit_on_error::do_not_exit>(__FUNCTION__, a, b);
 	}
 
 	template<typename C = void, typename A, typename B>
@@ -35,7 +35,7 @@ namespace quality_control
 	constexpr inline bool _assert_equal(const A& a, const B& b)
 	{
 		if (a == b) return true;
-		return _on_unexpected_result<_cast_to::exit>(__FUNCTION__, a, b);
+		return _on_unexpected_result<_exit_on_error::exit>(__FUNCTION__, a, b);
 	}
 
 	template<typename C = void, typename A, typename B>
