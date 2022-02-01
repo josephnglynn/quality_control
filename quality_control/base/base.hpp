@@ -29,20 +29,21 @@ namespace quality_control
 		}
 
 		template<typename T>
-		struct _output_value
+		struct OutputValue
 		{
-			const T* t;
+			explicit OutputValue(const T& t) : data(t) {}
+			const T& data;
 
-			constexpr friend std::ostream& operator<<(std::ostream& os, const _output_value<T>& output_value)
+			constexpr friend std::ostream& operator<<(std::ostream& os, const OutputValue<T>& output_value)
 			{
 				if constexpr (new_line_for_output<T>())
 				{
 					os << "\n"
-					   << LOGGER_INTERVAL << *output_value.t;
+					   << LOGGER_INTERVAL << output_value.data;
 				}
 				else
 				{
-					os << *output_value.t;
+					os << output_value.data;
 				}
 
 				return os;
@@ -50,11 +51,9 @@ namespace quality_control
 		};
 
 		template<typename T>
-		static _output_value<T> output_error_value(const T& t)
+		constexpr inline OutputValue<T> output_error_value(const T& t)
 		{
-			_output_value<T> output_value;
-			output_value.t = &t;
-			return output_value;
+			return OutputValue<T>(t);
 		}
 
 		template<_exit_type exit_on_error, typename A, typename B>
