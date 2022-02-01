@@ -23,15 +23,11 @@ namespace quality_control
 		return _equality<_exit_type::do_not_exit>( _quality_control_do_cast_if_not_void(a, C),  _quality_control_do_cast_if_not_void(b, C));
 	}
 
-
 	template<typename C = void, typename A, typename B>
 	constexpr inline bool assert_equal(const A& a, const B& b)
 	{
 		return _equality<_exit_type::exit>( _quality_control_do_cast_if_not_void(a, C),  _quality_control_do_cast_if_not_void(b, C));
 	}
-
-
-
 }// namespace quality_control
 
 template<typename C = void, typename A, typename B>

@@ -20,12 +20,15 @@ Note: All global namespace functions are just wrappers around namespaced functio
 
 The functions in namespace ```quality_control::*``` are :
 ```c++
+quality_control::check_equal<C>(a, b); // The C is only needed if casting is needed
 quality_control::check_equal(a, b);
-quality_control::check_equal<C>(a, b);
+
+quality_control::assert_equal<C>(a, b); // The C is only needed if casting is needed
+quality_control::assert_equal(a, b);
 ```
 
 The functions in global namespace are :
 ```c++
 CHECK_EQUAL(a, b)
-CHECK_EQUAL<C>(a, b)
+ASSERT_EQUAL<C>(a, b)
 ```
