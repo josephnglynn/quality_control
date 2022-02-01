@@ -10,23 +10,26 @@
 namespace quality_control
 {
 
-	template<_exit_type exit_type, typename A, typename B>
-	constexpr inline bool _equality(const A& a, const B& b)
+	namespace internal
 	{
-		if (a == b) return true;
-		return _on_unexpected_result<exit_type>(__FUNCTION__, a, b);
+		template<_exit_type exit_type, typename A, typename B>
+		constexpr inline bool equality(const A& a, const B& b)
+		{
+			if (a == b) return true;
+			return on_unexpected_result<exit_type>(__FUNCTION__, a, b);
+		}
 	}
 
 	template<typename C = void, typename A, typename B>
 	constexpr inline bool check_equal(const A& a, const B& b)
 	{
-		return _equality<_exit_type::do_not_exit>( _quality_control_do_cast_if_not_void(a, C),  _quality_control_do_cast_if_not_void(b, C));
+		return internal::equality<internal::_exit_type::do_not_exit>(do_cast_if_not_void<A, C>(a).data,do_cast_if_not_void<B, C>(b).data);
 	}
 
 	template<typename C = void, typename A, typename B>
 	constexpr inline bool assert_equal(const A& a, const B& b)
 	{
-		return _equality<_exit_type::exit>( _quality_control_do_cast_if_not_void(a, C),  _quality_control_do_cast_if_not_void(b, C));
+		return internal::equality<internal::_exit_type::exit>(do_cast_if_not_void<A, C>(a).data,do_cast_if_not_void<B, C>(b).data);
 	}
 }// namespace quality_control
 

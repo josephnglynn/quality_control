@@ -14,65 +14,78 @@
 namespace quality_control
 {
 
-	enum _exit_type
+	namespace internal
 	{
-		do_not_exit,
-		exit
-	};
-
-	template<typename T>
-	static constexpr bool _new_line_for_output()
-	{
-		return false;
-	}
-
-	template<typename T>
-	struct _output_value
-	{
-		const T* t;
-
-		constexpr friend std::ostream& operator<<(std::ostream& os, const _output_value<T>& output_value)
+		enum _exit_type
 		{
-			if constexpr (_new_line_for_output<T>())
-			{
-				os << "\n"
-				   << LOGGER_INTERVAL << *output_value.t;
-			}
-			else
-			{
-				os << *output_value.t;
-			}
+			do_not_exit,
+			exit
+		};
 
-			return os;
+		template<typename T>
+		static constexpr bool new_line_for_output()
+		{
+			return false;
 		}
-	};
+
+		template<typename T>
+		struct _output_value
+		{
+			const T* t;
+
+			constexpr friend std::ostream& operator<<(std::ostream& os, const _output_value<T>& output_value)
+			{
+				if constexpr (new_line_for_output<T>())
+				{
+					os << "\n"
+					   << LOGGER_INTERVAL << *output_value.t;
+				}
+				else
+				{
+					os << *output_value.t;
+				}
+
+				return os;
+			}
+		};
+
+		template<typename T>
+		static _output_value<T> output_error_value(const T& t)
+		{
+			_output_value<T> output_value;
+			output_value.t = &t;
+			return output_value;
+		}
+
+		template<_exit_type exit_on_error, typename A, typename B>
+		constexpr bool on_unexpected_result(const char* test_name, const A& a, const B& b)
+		{
+			logger::error("Error running test: ", test_name);
+			logger::error("Where a" LOGGER_PURPLE " ( type:",
+				abi::__cxa_demangle(typeid(a).name(), nullptr, nullptr, nullptr), "):",
+				output_error_value(a));
+			logger::error("And b" LOGGER_PURPLE " ( type:",
+				abi::__cxa_demangle(typeid(b).name(), nullptr, nullptr, nullptr), "):",
+				output_error_value(b));
+			if constexpr (exit_on_error == exit) std::exit(EXIT_CODE_ON_ERROR);
+			return false;
+		}
+
+	}
 
 	template<typename T>
-	static _output_value<T> _output_error_value(const T& t)
+	struct CastedTypeData
 	{
-		_output_value<T> output_value;
-		output_value.t = &t;
-		return output_value;
-	}
+		explicit CastedTypeData(const T& t) : data(t) {}
+		const T& data;
+	};
 
-	template<_exit_type exit_on_error, typename A, typename B>
-	constexpr bool _on_unexpected_result(const char* test_name, const A& a, const B& b)
+	template<typename A, typename C>
+	constexpr inline decltype(auto) do_cast_if_not_void(const A& a)
 	{
-		logger::error("Error running test: ", test_name);
-		logger::error("Where a" LOGGER_PURPLE " ( type:",
-			abi::__cxa_demangle(typeid(a).name(), nullptr, nullptr, nullptr), "):",
-			_output_error_value(a));
-		logger::error("And b" LOGGER_PURPLE " ( type:",
-			abi::__cxa_demangle(typeid(b).name(), nullptr, nullptr, nullptr), "):",
-			_output_error_value(b));
-		if constexpr (exit_on_error == exit) std::exit(EXIT_CODE_ON_ERROR);
-		return false;
+		if constexpr (std::is_void<C>::value || std::is_same<A, C>::value) return CastedTypeData<A>(a);
+		if constexpr (!std::is_void<C>::value && !std::is_same<A, C>::value) return CastedTypeData<C>(static_cast<const C&>(a));
 	}
-
-	#define  _quality_control_do_cast_if_not_void(x, T) [&]{ \
-		if constexpr (std::is_void<T>::value || std::is_same<decltype(x), T>::value) return x; \
-		if constexpr (!std::is_void<T>::value && !std::is_same<decltype(x), T>::value) return static_cast<T>(x); \
-	}()
 
 }// namespace quality_control
 
