@@ -5,19 +5,12 @@
 #include <quality_control/quality_control.hpp>
 #include <utils.hpp>
 
-
-
-
-SUITE(awesome_test_123) {
-
+SUITE(awesome_test_123)
+{
 }
-
-
 
 int main()
 {
-
-
 
 	// Equality of varying unsigned types.
 	utils::test_numbers<int8_t>([](int8_t a, int8_t b) { return CHECK_EQUAL(a, b); });
